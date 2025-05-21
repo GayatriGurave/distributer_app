@@ -57,7 +57,7 @@ const Carts = () => {
   return (
     <Box sx={{ padding: 4, backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
       <Typography variant="h4" align="center" gutterBottom color="primary">
-        Your Shopping Cart
+        Your  Cart
       </Typography>
 
       {cartItems.length === 0 ? (

@@ -5,20 +5,52 @@ import {
     Paper,
     Grid,
     Divider,
+    Chip,
     useTheme
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useLocation } from 'react-router-dom';
+import PersonIcon from '@mui/icons-material/Person';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
+import CategoryIcon from '@mui/icons-material/Category';
+import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 
 const OrderDetails = () => {
     const orderData = useLocation().state;
     const theme = useTheme();
 
-    const columns = [
+   const columns = [
         { field: 'name', headerName: 'Product Name', flex: 1 },
-        { field: 'price', headerName: 'Price', type: 'number', width: 120 },
-        { field: 'demandedQty', headerName: 'Demanded Qty', type: 'number', width: 150 },
-        { field: 'exceptedQty', headerName: 'Expected Qty', type: 'number', width: 150 }
+        {
+            field: 'price',
+            headerName: 'Price',
+            type: 'number',
+            width: 120,
+            renderCell: (params) => (
+                <Typography color="primary" fontWeight={600}>
+                    ₹{params.value?.toLocaleString() || 0}
+                </Typography>
+            )
+        },
+        {
+            field: 'demandedQty',
+            headerName: 'Demanded Qty',
+            type: 'number',
+            width: 150,
+            renderCell: (params) => (
+                <Chip label={params.value} color="info" variant="outlined" />
+            )
+        },
+        {
+            field: 'exceptedQty',
+            headerName: 'Expected Qty',
+            type: 'number',
+            width: 150,
+            renderCell: (params) => (
+                <Chip label={params.value} color="success" variant="outlined" />
+            )
+        }
     ];
 
     const rows = orderData?.orderItems?.map((ord, index) => ({
@@ -31,35 +63,59 @@ const OrderDetails = () => {
 
     return (
         <Box sx={{ padding: 4 }}>
-            <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: theme.palette.primary.main }}>
-                Order Details
-            </Typography>
+           <Paper
+                    elevation={6}
+                    sx={{
+                        p: 4,
+                        borderRadius: 4,
+                        boxShadow: '0 4px 24px 0 rgba(33,150,243,0.15)',
+                        background: '#fff',
+                        mb: 4,
+                    }}
+                >
+                    <Box display="flex" alignItems="center" mb={2}>
+                        <Inventory2OutlinedIcon color="primary" sx={{ fontSize: 36, mr: 1 }} />
+                        <Typography variant="h4" fontWeight={700} color="primary.dark">
+                            Order Details
+                        </Typography>
+                    </Box>
 
-            <Paper elevation={3} sx={{ padding: 3, marginBottom: 4 }}>
-                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'medium' }}>
-                    Distributor Information
-                </Typography>
-                <Divider sx={{ marginBottom: 2 }} />
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Typography><strong>Name:</strong> {orderData.distributerId.name}</Typography>
+                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'medium', mb: 1 }}>
+                        Distributor Information
+                    </Typography>
+                    <Divider sx={{ marginBottom: 2 }} />
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <Box display="flex" alignItems="center">
+                                <PersonIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
+                                <Typography><strong>Name:</strong> {orderData.distributerId.name}</Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <Box display="flex" alignItems="center">
+                                <LocationCityIcon sx={{ mr: 1, color: theme.palette.secondary.main }} />
+                                <Typography><strong>City:</strong> {orderData.distributerId.city}</Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <Box display="flex" alignItems="center">
+                                <CategoryIcon sx={{ mr: 1, color: theme.palette.info.main }} />
+                                <Typography><strong>Type:</strong> {orderData.distributerId.distType}</Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <Box display="flex" alignItems="center">
+                                <PhoneAndroidIcon sx={{ mr: 1, color: theme.palette.success.main }} />
+                                <Typography><strong>Mobile:</strong> {orderData.distributerId.mobile}</Typography>
+                            </Box>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Typography><strong>City:</strong> {orderData.distributerId.city}</Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Typography><strong>Type:</strong> {orderData.distributerId.distType}</Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Typography><strong>Mobile:</strong> {orderData.distributerId.mobile}</Typography>
-                    </Grid>
-                </Grid>
-            </Paper>
+                </Paper>
 
             <Paper elevation={3} sx={{ padding: 3 }}>
-                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'medium' }}>
-                    Products in Order
-                </Typography>
+                 <Typography variant="h6" gutterBottom sx={{ fontWeight: 'medium', mb: 1 }}>
+                        Products in Order
+                    </Typography>
                 <Divider sx={{ marginBottom: 2 }} />
                 <Box sx={{ height: 400, width: '100%' }}>
                     <DataGrid

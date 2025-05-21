@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Typography,Chip, Tooltip } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 const Orders = () => {
+    const statusColors = {
+    Pending: 'warning',
+    Completed: 'success',
+    Cancelled: 'error',
+    Processing: 'info',
+};
+
+
     const [allOrders, setAllOrders] = useState([]);
     const navigate = useNavigate();
 
@@ -25,26 +34,61 @@ const Orders = () => {
     const columns = [
         {
             field: 'orderDate',
-            headerName: 'Order Date',
+            headerName: 'Date',
             flex: 1,
             renderCell: (params) => {
                 const date = params.row?.orderDate;
-                return <span>{date ? new Date(date).toLocaleString() : 'N/A'}</span>;
+                return (
+                    <Tooltip title={date ? new Date(date).toLocaleString() : 'N/A'}>
+                        <span>{date ? new Date(date).toLocaleDateString() : 'N/A'}</span>
+                    </Tooltip>
+                );
             }
         },
-        { field: 'orderStatus', headerName: 'Status', flex: 1 },
-        { field: 'orderTotalAmount', headerName: 'Total Amount', flex: 1 },
+       {
+            field: 'orderStatus',
+            headerName: 'Status',
+            flex: 1,
+            renderCell: (params) => (
+                <Chip
+                    label={params.value}
+                    color={statusColors[params.value] || 'default'}
+                    variant="outlined"
+                    sx={{ fontWeight: 500 }}
+                />
+            )
+        },
+        {
+            field: 'orderTotalAmount',
+            headerName: 'Price',
+            flex: 1,
+            renderCell: (params) => (
+                <Typography fontWeight={600} color="primary">
+                    ₹{params.value?.toLocaleString() || '0'}
+                </Typography>
+            )
+        },
         {
             field: 'actions',
-            headerName: 'Actions',
+            headerName: 'Details',
             flex: 1,
             sortable: false,
             filterable: false,
             renderCell: (params) => (
-                <Button
+               <Button
                     variant="contained"
                     color="primary"
+                    endIcon={<InfoOutlinedIcon />}
                     onClick={() => navigate("/detail", { state: params.row })}
+                    sx={{
+                        textTransform: 'none',
+                        fontWeight: 500,
+                        background: 'linear-gradient(90deg, #1976d2 60%, #42a5f5 100%)',
+                        boxShadow: 2,
+                        '&:hover': {
+                            background: 'linear-gradient(90deg, #1565c0 60%, #64b5f6 100%)',
+                        }
+                    }}
                 >
                     Details
                 </Button>
