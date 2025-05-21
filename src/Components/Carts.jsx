@@ -13,19 +13,46 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   calculateTotal,
+  clearCart,
   decrementQty,
   incrementQty,
   removeItem,
 } from '../reduxwork/CartSlice';
+import axios from 'axios';
 
 const Carts = () => {
   const { cartItems, cartTotalAmount } = useSelector((state) => state.cart);
+  const { userdata } = useSelector((state) => state.userInfo);
+
   const dispatch = useDispatch();
 
   // Recalculate total only when cartItems change
   useEffect(() => {
     dispatch(calculateTotal());
   }, [cartItems, dispatch]);
+
+  let postOrder = async () => {
+    let finalItems = []
+    cartItems.forEach(item => {
+      finalItems.push({ prodId: item._id, demandedQty: item.qty })
+    });
+    console.log("FI", finalItems);
+    const distributerId = userdata._id;
+    let orderReqData = {
+      orderTotalAmount: cartTotalAmount,
+      distributerId,
+      orderItems: finalItems,
+
+    }
+    try {
+      let result = await axios.post("http://localhost:5000/api/createorder", orderReqData)
+      console.log("Ord", result.data);
+      dispatch(clearCart())
+      alert("Order Placed")
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <Box sx={{ padding: 4, backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
@@ -111,7 +138,7 @@ const Carts = () => {
             <Typography variant="h5" color="secondary">
               Total Amount: ${cartTotalAmount.toFixed(2)}
             </Typography>
-           
+            <Button onClick={() => postOrder()} variant='contained' color='primary'>Place Order</Button>
           </Box>
         </>
       )}

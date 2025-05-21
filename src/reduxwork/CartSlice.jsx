@@ -46,6 +46,9 @@ let CartSlice = createSlice({
                 totAmt += item.price * item.qty
             })
             state.cartTotalAmount = totAmt
+        },
+         clearCart : (state)=>{
+            state.cartItems = []
         }
 
     }
@@ -54,6 +57,7 @@ export const { addItem,
     incrementQty,
     decrementQty,
     removeItem,
-    calculateTotal } = CartSlice.actions
+    calculateTotal ,
+    clearCart} = CartSlice.actions
 
 export default CartSlice.reducer
