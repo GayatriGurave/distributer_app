@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -8,8 +9,9 @@ import {
   Divider,
   Grid,
   Typography,
+  Snackbar,
+  Alert,
 } from '@mui/material';
-import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   calculateTotal,
@@ -26,15 +28,20 @@ const Carts = () => {
 
   const dispatch = useDispatch();
 
+  // Snackbar state
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+
   // Recalculate total only when cartItems change
   useEffect(() => {
     dispatch(calculateTotal());
   }, [cartItems, dispatch]);
 
+  // Function to post the order and show the snackbar
   let postOrder = async () => {
-    let finalItems = []
-    cartItems.forEach(item => {
-      finalItems.push({ prodId: item._id, demandedQty: item.qty })
+    let finalItems = [];
+    cartItems.forEach((item) => {
+      finalItems.push({ prodId: item._id, demandedQty: item.qty });
     });
     console.log("FI", finalItems);
     const distributerId = userdata._id;
@@ -42,22 +49,31 @@ const Carts = () => {
       orderTotalAmount: cartTotalAmount,
       distributerId,
       orderItems: finalItems,
-
-    }
+    };
     try {
-      let result = await axios.post("http://localhost:5000/api/createorder", orderReqData)
+      let result = await axios.post("http://localhost:5000/api/createorder", orderReqData);
       console.log("Ord", result.data);
-      dispatch(clearCart())
-      alert("Order Placed")
+      dispatch(clearCart());
+
+      // Trigger Snackbar
+      setSnackbarMessage('Order Placed Successfully!');
+      setSnackbarOpen(true);
     } catch (error) {
       console.log(error);
+      setSnackbarMessage('Failed to place the order. Try again!');
+      setSnackbarOpen(true);
     }
-  }
+  };
+
+  // Handle snackbar close
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   return (
     <Box sx={{ padding: 4, backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
       <Typography variant="h4" align="center" gutterBottom color="primary">
-        Your  Cart
+        Your Cart
       </Typography>
 
       {cartItems.length === 0 ? (
@@ -138,10 +154,23 @@ const Carts = () => {
             <Typography variant="h5" color="secondary">
               Total Amount: ${cartTotalAmount.toFixed(2)}
             </Typography>
-            <Button onClick={() => postOrder()} variant='contained' color='primary'>Place Order</Button>
+            <Button onClick={() => postOrder()} variant='contained' color='primary'>
+              Place Order
+            </Button>
           </Box>
         </>
       )}
+
+      {/* Snackbar for Order Placement */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

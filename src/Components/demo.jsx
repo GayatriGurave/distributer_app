@@ -1,140 +1,143 @@
+import React from 'react';
+import {
+  Typography,
+  Box,
+  Paper,
+  Grid,
+  Divider,
+  Chip,
+  useTheme
+} from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+import { useLocation } from 'react-router-dom';
+import PersonIcon from '@mui/icons-material/Person';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
+import CategoryIcon from '@mui/icons-material/Category';
+import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 
-// import { Box, Button, Card, CardActions, CardContent, CardMedia, Grid, Typography } from '@mui/material'
-// import React from 'react'
-// import { useDispatch, useSelector } from 'react-redux'
-// import { calculateTotal, decrementQty, incrementQty, removeItem } from '../reduxwork/CartSlice'
+const OrderDetails = () => {
+  const orderData = useLocation().state;
+  const theme = useTheme();
 
-// const Carts = () => {
-//   let { cartItems, cartTotalAmount } = useSelector((state) => state.cart)
-//   let dispatcher = useDispatch()
+  const columns = [
+   {
+      field: 'title',
+      headerName: 'Product Name',
+      flex: 1,
+      renderCell: (params) => (
+        <Typography color="primary" fontWeight={600}>
+          {params.value}
+        </Typography>
+      )
+    },
+     {
+      field: 'price',
+      headerName: 'Price',
+      type: 'number',
+      width: 120,
+      renderCell: (params) => (
+        <Typography fontWeight={600}>
+          ₹{params.value}
+        </Typography>
+      )
+    },
+    {
+      field: 'demandedQty',
+      headerName: 'Demanded Qty',
+      type: 'number',
+      width: 150,
+      renderCell: (params) => (
+        <Chip label={params.row.demandedQty} color="info" variant="outlined" />
+      )
+    },
+    {
+      field: 'exceptedQty',
+      headerName: 'Expected Qty',
+      type: 'number',
+      width: 150,
+      renderCell: (params) => (
+        <Chip label={params.row.exceptedQty} color="success" variant="outlined" />
+      )
+    }
+  ];
 
-//   dispatcher(calculateTotal())
+  const rows = orderData?.orderItems?.map((ord, index) => ({
+    id: ord.prodId?._id || index,
+    title: ord.prodId?.title || 'N/A',
+    price: ord.prodId?.price || 0,
+    demandedQty: ord.demandedQty || 0,
+    exceptedQty: ord.exceptedQty || 0
+  })) || [];
 
-//   return (
-//     <>
-//       <Box>
-//         <Grid container spacing={3} padding={2}>
-//           {
-//             cartItems.map((prod) => {
-//               let pId = prod._id
-//               return (
-//                 <Grid size={{
-//                   sm: 12,
-//                   lg: 4,
-//                   md: 6
-//                 }} item key={prod._id}>
-//                   <Card>
-//                     <CardMedia component="img" sx={{ height: 190, objectFit: 'contain', width: '100%' }}
-//                       image={`http://localhost:5000/${prod.prodimage?.replace("\\", "/")}`}
-//                     />
+  return (
+    <Box sx={{ padding: 4 }}>
+      <Paper
+        elevation={6}
+        sx={{
+          p: 4,
+          borderRadius: 4,
+          boxShadow: '0 4px 24px 0 rgba(33,150,243,0.15)',
+          background: '#fff',
+          mb: 4,
+        }}
+      >
+        <Box display="flex" alignItems="center" mb={2}>
+          <Inventory2OutlinedIcon color="primary" sx={{ fontSize: 36, mr: 1 }} />
+          <Typography variant="h4" fontWeight={700} color="primary.dark">
+            Order Details
+          </Typography>
+        </Box>
 
-//                     <CardContent>
-//                       <Typography variant='h5'>{prod.title}</Typography>
-//                       <Typography variant='h5'>{prod.category}</Typography>
-//                       <Typography variant='h5' color='{prod.price>15? "error":"primary"}'>{prod.price}</Typography>
-//                     </CardContent>
-//                     <CardActions>
-//                       <Button onClick={() => {
-//                         dispatcher(decrementQty({ pId }))
-//                       }} variant='contained' color='error'>-</Button>
-//                       {prod.qty}
-//                       <Button onClick={() => {
-//                         dispatcher(incrementQty({ pId }))
-//                       }} variant='contained' color='success'>+</Button>
-//                       <Button onClick={() => dispatcher(removeItem({ pId }))} variant='contained' color='error'>Remove</Button>
-//                     </CardActions>
-//                   </Card>
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: 'medium', mb: 1 }}>
+          Distributor Information
+        </Typography>
+        <Divider sx={{ marginBottom: 2 }} />
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={3}>
+            <Box display="flex" alignItems="center">
+              <PersonIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
+              <Typography><strong>Name:</strong> {orderData.distributerId?.name || 'N/A'}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Box display="flex" alignItems="center">
+              <LocationCityIcon sx={{ mr: 1, color: theme.palette.secondary.main }} />
+              <Typography><strong>City:</strong> {orderData.distributerId?.city || 'N/A'}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Box display="flex" alignItems="center">
+              <CategoryIcon sx={{ mr: 1, color: theme.palette.info.main }} />
+              <Typography><strong>Type:</strong> {orderData.distributerId?.distType || 'N/A'}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Box display="flex" alignItems="center">
+              <PhoneAndroidIcon sx={{ mr: 1, color: theme.palette.success.main }} />
+              <Typography><strong>Mobile:</strong> {orderData.distributerId?.mobile || 'N/A'}</Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Paper>
 
-//                 </Grid>
-//               )
-//             })
-//           }
-//         </Grid>
-//       </Box>
-//       <Typography>Total:{cartTotalAmount}</Typography>
-//     </>
-//   )
-// }
+      <Paper elevation={3} sx={{ padding: 3 }}>
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: 'medium', mb: 1 }}>
+          Products in Order
+        </Typography>
+        <Divider sx={{ marginBottom: 2 }} />
+        <Box sx={{ height: 400, width: '100%' }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            disableSelectionOnClick
+          />
+        </Box>
+      </Paper>
+    </Box>
+  );
+};
 
-// export default Carts
-
-// import { Box, Button, Card,  CardActions, CardContent, CardMedia,  Grid, Snackbar, Typography } from '@mui/material'
-// import axios from 'axios'
-// import React, { useEffect, useState } from 'react'
-// import { useDispatch } from 'react-redux'
-// import { addItem } from '../reduxwork/CartSlice'
-
-// const Products = () => {
-//     const [products, setproducts] = useState([])
-//     const [isopen, setisopen] = useState(false)
-//      let dispatcher = useDispatch()
-
-//   useEffect(()=>{
-//     async function fetchproduct(){
-//         let result = await axios.get("http://localhost:5000/api/fetchproduct")
-//         setproducts(result.data)
-//         console.log("Data",result.data);
-//     }
-//     fetchproduct()
-//   },[])
-//   let handleopen=()=>{
-//     setisopen(true)
-//   }  
-
-//   let handleClose=()=>{
-//     setisopen(false)
-//   }
-//   return (
-//     <Box sx={{padding:4,backgroundColor:'#f5f5f5',minHeight:'100vh'}}>
-//     <Typography variant='h4' align='center' gutterBottom>Product Management</Typography>
-//     <Grid container spacing={3} padding={2}>
-//     {
-//         products.map((prod)=>{
-//             return(
-//                 <Grid  size={{
-//                     sm : 12,
-//                     md : 6,
-//                     lg : 4
-//                 }} item key={prod._id}>
-//                 <Card sx={{maxWidth:400,
-//                            margin:'auto',
-//                            borderRadius:3,
-//                            boxShadow:4,
-//                            display:'flex',
-//                            flexDirection:'column',
-//                            justifyContent:'space-between',
-//                            textAlign:'center'
-//                 }}>
-//                     <CardMedia component="img" sx={{height: 190,objectFit:'contain',width:'100%'}}
-//                     image={`http://localhost:5000/${prod.prodimage?.replace("\\","/")}`}
-//                     />
-//                     <CardContent>
-//                         <Typography variant='h5'><strong>Title</strong> : {prod.title}</Typography>
-//                         <Typography variant='h5'><strong>Category</strong> : {prod.category}</Typography>
-//                   <Typography variant='h5'><strong>Price</strong> : {prod.price}</Typography>
-//                     </CardContent>
-//                     <CardActions>
-//                         <Button onClick={()=>{
-//                              dispatcher(addItem(prod))
-//                             handleopen()
-//                         }} color='secondary' variant='contained'>AddToCard</Button>
-//                         <Snackbar 
-//                         open={isopen}
-//                         autoHideDuration={6000}
-//                         onClose={handleClose}
-//                         message="Product Added"
-//                         />
-//                     </CardActions>
-//                 </Card>
-//                 </Grid>
-                
-//             )
-//         })
-//     }
-//     </Grid>
-    
-// </Box>
-//   )
-// }
-
-// export default Products
+export default OrderDetails;

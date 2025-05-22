@@ -8,7 +8,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 const Orders = () => {
     const statusColors = {
     Pending: 'warning',
-    Completed: 'success',
+    Approved: 'success',
     Cancelled: 'error',
     Processing: 'info',
 };
@@ -53,6 +53,7 @@ const Orders = () => {
                 <Chip
                     label={params.value}
                     color={statusColors[params.value] || 'default'}
+                   
                     variant="outlined"
                     sx={{ fontWeight: 500 }}
                 />
