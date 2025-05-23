@@ -53,7 +53,7 @@ const OrderDetails = () => {
     },
     {
       field: 'exceptedQty',
-      headerName: 'Expected Qty',
+      headerName: 'Excepted Qty',
       type: 'number',
       width: 150,
       renderCell: (params) => (

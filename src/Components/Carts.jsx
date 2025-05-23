@@ -113,7 +113,7 @@ const Carts = () => {
                         variant="body1"
                         sx={{ fontWeight: 'bold', color: prod.price > 15 ? 'error.main' : 'primary.main' }}
                       >
-                        ${prod.price}
+                        ₹{prod.price}
                       </Typography>
                     </CardContent>
                     <Divider />
