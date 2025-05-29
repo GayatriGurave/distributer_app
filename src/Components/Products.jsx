@@ -45,7 +45,7 @@ const Products = () => {
   return (
     <Box sx={{ padding: 4, backgroundColor: '#f4f4f4', minHeight: '100vh' }}>
       <Typography variant="h4" align="center" gutterBottom color="primary">
-        Explore Products
+         Products
       </Typography>
 
       <Box

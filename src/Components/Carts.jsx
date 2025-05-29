@@ -152,7 +152,7 @@ const Carts = () => {
           <Box sx={{ textAlign: 'center', marginTop: 5 }}>
             <Divider sx={{ mb: 2 }} />
             <Typography variant="h5" color="secondary">
-              Total Amount: ${cartTotalAmount.toFixed(2)}
+              Total Amount: ₹{cartTotalAmount.toFixed(2)}
             </Typography>
             <Button onClick={() => postOrder()} variant='contained' color='primary'>
               Place Order
