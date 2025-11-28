@@ -21,7 +21,7 @@ const OrderDetails = () => {
   const theme = useTheme();
 
   const columns = [
-   {
+    {
       field: 'title',
       headerName: 'Product Name',
       flex: 1,
@@ -31,7 +31,7 @@ const OrderDetails = () => {
         </Typography>
       )
     },
-     {
+    {
       field: 'price',
       headerName: 'Price',
       type: 'number',
@@ -59,16 +59,32 @@ const OrderDetails = () => {
       renderCell: (params) => (
         <Chip label={params.row.exceptedQty} color="success" variant="outlined" />
       )
+    },
+    {
+      field: 'approvedAmount',
+      headerName: 'Approved Amount',
+      type: 'number',
+      width: 180,
+      renderCell: (params) => (
+        <Typography fontWeight={600}>
+          ₹{params.value.toFixed(2)}
+        </Typography>
+      )
     }
   ];
 
-  const rows = orderData?.orderItems?.map((ord, index) => ({
-    id: ord.prodId?._id || index,
-    title: ord.prodId?.title || 'N/A',
-    price: ord.prodId?.price || 0,
-    demandedQty: ord.demandedQty || 0,
-    exceptedQty: ord.exceptedQty || 0
-  })) || [];
+  const rows = orderData?.orderItems?.map((ord, index) => {
+    const price = Number(ord.prodId?.price) || 0;
+    const exceptedQty = Number(ord.exceptedQty) || 0;
+    return {
+      id: ord.prodId?._id || index,
+      title: ord.prodId?.title || 'N/A',
+      price: price,
+      demandedQty: Number(ord.demandedQty) || 0,
+      exceptedQty: exceptedQty,
+      approvedAmount: price * exceptedQty
+    };
+  }) || [];
 
   return (
     <Box sx={{ padding: 4 }}>
@@ -126,6 +142,10 @@ const OrderDetails = () => {
           Products in Order
         </Typography>
         <Divider sx={{ marginBottom: 2 }} />
+        <Typography variant="h6" align="right" sx={{ mt: 2, fontWeight: 'bold' }}>
+          Total Approved Amount: ₹
+          {rows.reduce((sum, row) => sum + (row.approvedAmount || 0), 0).toFixed(2)}
+        </Typography>
         <Box sx={{ height: 400, width: '100%' }}>
           <DataGrid
             rows={rows}
@@ -135,6 +155,7 @@ const OrderDetails = () => {
             disableSelectionOnClick
           />
         </Box>
+
       </Paper>
     </Box>
   );
